@@ -89,3 +89,39 @@ export const sendContactMail = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const sendMailToAll = async (req, res) => {
+  const { title, update, description } = req.body;
+
+  try {
+    // Fetch all users (students/admins) from your API
+    const response = await fetch("https://mocktest-bckx.onrender.com/api/v1/admin/students");
+    const data = await response.json();
+    const students = data?.data?.students || [];
+
+    // Loop and send emails
+    for (const student of students) {
+      const mailOptions = {
+        from: `"PrepZone Updates" <${process.env.EMAIL_USER}>`,
+        to: student.email,
+        subject: `📢 ${title} — ${update}`,
+        html: `
+          <div style="font-family:sans-serif;padding:20px;">
+            <h3>${title}</h3>
+            <p><strong>Update:</strong> ${update}</p>
+            <p><strong>Details:</strong><br/>${description}</p>
+            <br/>
+            <p>Hi ${student.name || "Student"},</p>
+            <p>Stay tuned for more updates from PrepZone!</p>
+          </div>
+        `,
+      };
+
+      await transporter.sendMail(mailOptions);
+    }
+
+    res.json({ message: "✅ Mail successfully sent to all students!" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
