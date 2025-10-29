@@ -15,7 +15,7 @@ export const sendRegisterMail = async (req, res) => {
   const { name, email } = req.body;
 
   const mailOptions = {
-    from: `"PrepZone" <${process.env.EMAIL_USER}>`,
+    from: `"PrepZon" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: "🎉 Welcome to PrepZone!",
     html: `
